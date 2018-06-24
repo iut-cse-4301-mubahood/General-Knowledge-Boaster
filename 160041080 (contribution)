@@ -1,0 +1,630 @@
+//Kaal
+//ID: 
+int convert_str_to_int(char h[3]){
+    k= (int)(h[0]);
+    k=k-48;
+    if((int)(h[1])>=48)
+    {
+        l=(int)(h[1]);
+        l=l-48;
+        k=k*10;
+        k=l+k;
+    }
+
+    return k;
+}
+
+void save_data(){
+    FILE *fpt_players_save; //file pointer for the player
+    fpt_players_save=fopen("players_data.txt","w");
+    fwrite(player,sizeof(player), 1,fpt_players_save);
+    fclose(fpt_players_save);
+}
+
+int load_data(){
+    FILE *fpt_players_load; //file pointer for the player
+
+    fflush(stdin);
+    fpt_players_load=fopen("players_data.txt","r");
+    fread(player,sizeof(player),1,fpt_players_load);
+    fclose(fpt_players_load);
+
+    number_of_players=0;
+
+    for(i=0; i<=100; i++){
+        if(strlen(player[i].name)>=1){
+            number_of_players++;
+        }
+        else break;
+    }
+
+    for(r=0; r<100; r++){
+
+        if(player[logged_in_id].questions_answered[r]==0)
+        {
+            no_qn=r;
+            break;
+        }
+    }
+
+    return number_of_players;
+}
+
+
+
+
+
+
+
+
+
+
+
+int play(bool test){
+    srand(time(NULL));
+
+    if(test && tested>9){
+        cout<<"You have already tested the game. Please create a players account\n\n\t\t";
+        choice = getch();
+        return 0;
+    }
+
+
+    if(test){
+        while(tested<10){
+            r = rand()%101;
+
+            system("cls");
+
+            cout<<"+-----------------------------------+";
+            cout<<"\n|            DEMO PLAYER            |";
+            cout<<"\n|            -----------            |";
+            cout<<"\n+-----------------------------------+\n";
+
+            cout<<"\n";
+            cout<<q[r].qn;
+            cout<<"\n  1. ";
+            cout<<q[r].opt[0];
+            cout<<"\n  2. ";
+            cout<<q[r].opt[1];
+            cout<<"\n  3. ";
+            cout<<q[r].opt[2];
+            cout<<"\n  4. ";
+            cout<<q[r].opt[3];
+            cout<<"\n \t";
+
+            do{
+                choice = getch();
+            }
+            while(choice != '1' && choice != '2' && choice != '3' && choice != '4' && choice != 27);
+
+            if(choice == 27){
+                return 0;
+            }else if((choice==q[r].correct_ans)){
+                system("cls");
+                system("COLOR A");
+                cout<<"+---------------------------------+";
+                cout<<"\n|             PERFECT!            |";
+                cout<<"\n|            ----------           |";
+                cout<<"\n+---------------------------------+";
+                cout<<"\n\n";
+                cout<<q[r].opt[4];
+                cout<<"\n\n\t\t ";
+                choice=getche();
+                system("COLOR 7");
+            }else{
+                system("cls");
+                system("COLOR C");
+                cout<<"+---------------------------------+";
+                cout<<"\n|              OOooops            |";
+                cout<<"\n|            ----------           |";
+                cout<<"\n+---------------------------------+";
+                cout<<"\n\n";
+                cout<<q[r].opt[4];
+                cout<<"\n\n\t\t ";
+                choice=getche();
+                system("COLOR 7");
+            }
+            tested++;
+        }
+    }else{
+
+
+HERE3:
+            system("cls");
+            r = rand()%101;
+            //Checking if a logged in player has already answered a certain question
+            for(n=0;n<player[logged_in_id].num_qn;n++){
+                if(r==player[logged_in_id].questions_answered[n]){
+                    goto HERE3;
+                }
+            }
+
+            cout<<"+-----------------------------------+";
+            cout<<"\n|              "<<player[logged_in_id].name<<"            ";
+            cout<<"\n|            -----------            |";
+            cout<<"\n+-----------------------------------+\n";
+
+            cout<<"\n";
+            cout<<q[r].qn;
+            cout<<"\n  1. ";
+            cout<<q[r].opt[0];
+            cout<<"\n  2. ";
+            cout<<q[r].opt[1];
+            cout<<"\n  3. ";
+            cout<<q[r].opt[2];
+            cout<<"\n  4. ";
+            cout<<q[r].opt[3];
+            cout<<"\n \t";
+
+            do{
+                choice = getch();
+            }
+            while(choice != '1' && choice != '2' && choice != '3' && choice != '4' && choice != 27);
+
+            if(choice == 27){
+                return 0;
+            }else{
+
+                if(choice == q[r].correct_ans){
+                    player[logged_in_id].points = player[logged_in_id].points + 5;
+                    system("cls");
+                    system("COLOR A");
+                    cout<<"+---------------------------------+";
+                    cout<<"\n|             PERFECT!            |";
+                    cout<<"\n|            ----------           |";
+                    cout<<"\n+---------------------------------+";
+                    cout<<"\n\n";
+                    cout<<q[r].opt[4];
+                    cout<<"\n\n\t\t ";
+                    choice=getche();
+                    system("COLOR 7");
+                }else{
+                    if(player[logged_in_id].points>=0){
+                        player[logged_in_id].points = player[logged_in_id].points - 5;
+                    }else{
+                        player[logged_in_id].points = 0;
+                        if(player[logged_in_id].num_qn>10){
+                                system("cls");
+                                cout<<"+--------------------------------+";
+                                cout<<"\n|           GAME OVER!          |";
+                                cout<<"\n|           ----------          |";
+                                cout<<"\n+--------------------------------+";
+
+                                cout<<"\n\nYou have answered many questions but with 0 points!";
+                                cout<<"\nBegin a fresh:\n\n\t\t  ";
+
+                                choice=getche();
+
+                                player[logged_in_id].points=0;
+                                for(k=0; k<player[logged_in_id].num_qn; k++)
+                                {
+                                    player[logged_in_id].questions_answered[k]=0;
+                                }
+                                player[logged_in_id].num_qn = 0;
+                                save_data();
+                                cout<<"\n\n\t    DATA CLEARED\n\n\t\t  ";
+                                choice=getch();
+                                resume();
+                                return 0;
+
+                        }
+
+                    }
+
+                    system("cls");
+                    system("COLOR C");
+                    cout<<"+---------------------------------+";
+                    cout<<"\n|              OOooops            |";
+                    cout<<"\n|            ----------           |";
+                    cout<<"\n+---------------------------------+";
+                    cout<<"\n\n";
+                    cout<<q[r].opt[4];
+                    cout<<"\n\n\t\t ";
+                    choice=getche();
+                    system("COLOR 7");
+                }
+            }
+
+            m = player[logged_in_id].num_qn;
+            player[logged_in_id].questions_answered[m] = r;
+            player[logged_in_id].num_qn = player[logged_in_id].num_qn + 1;
+            save_data();
+        goto HERE3;
+
+    }
+
+    return 0;
+};
+
+///-------------------///
+///-------------------///
+///End Of LATIFA/////
+///-------------------///
+///-------------------///
+
+
+///-------------------///
+///-------------------///
+/// begining of Kaal ////
+///-------------------///
+///-------------------///
+
+
+
+int demo(){
+    system("cls");//clearing screen
+    cout<<"\n\n\t\t--------->>> DEMO <<<<----------\n";
+    cout<<"\n\t\t     Create a Player Account\n";
+    cout<<"\n\t\t      Choose Player Account\n";
+    cout<<"\n\t\t            Read ME\n";
+    cout<<"\n\t\t              Quit        \n\n\t\t\t        ";
+
+    here1:
+    choice = getch();
+
+    if(choice=='W' || choice=='w')
+    {
+        quiting();
+        return 0;
+    }
+    else if(choice=='S' || choice=='s')
+    {
+        create_acc();
+        return 0;
+    }
+    else if(choice==13)
+    {
+        system("cls");
+        play(true);
+        demo();
+        return 0;
+    }else{
+        goto here1;
+    }
+
+    demo();
+    return 0;
+}
+
+int create_acc(){
+    //clearing screen
+    system("cls");
+
+    cout<<"\n\n\t\t             Demo\n";
+    cout<<"\n\t      --->>> CREATE A PLAYER ACCOUNT <<<---\n";
+    cout<<"\n\t              Choose Player Account\n";
+    cout<<"\n\t\t            Read ME\n";
+    cout<<"\n\t\t              Quit         \n\n\t\t\t        ";
+
+    //waiting for choice from the user
+    choice=getch();
+    if(choice=='W' || choice=='w'){
+        demo();
+        return 0;
+    }
+    else if(choice=='S' || choice=='s'){
+        choose_acc();
+        return 0;
+    }
+    else if(choice==13){
+
+    //NOW CREATING A PLAYER IN CASE THE USER PRSSES ENTER
+
+        number_of_players = load_data();
+        system("cls");
+        cout<<"+---------------------------------+";
+        cout<<"\n|   CREATING PLAYERS' ACCOUNTS    |";
+        cout<<"\n|   --------------------------    |";
+        cout<<"\n+---------------------------------+";
+
+
+        player[number_of_players].display=1;
+        player[number_of_players].points=0;
+        player[number_of_players].num_qn=0;
+        fflush(stdin);
+        cout<<"\n\n  PLAYER's NAME    :  ";
+
+        fflush(stdin);
+        gets(player[number_of_players].name);
+
+        while(1){
+            cout<<"\nWould you like to protect this account with a Key?\ntEnter 'Y' or 'y' for yes OR any key for no: ";
+            choice=getch();
+            if(choice=='y' || choice=='Y'){
+                int m=0,q=0;
+HERE:
+                system("cls");
+                fflush(stdin);
+                cout<<"+---------------------------------+";
+                cout<<"\n|   CREATING PLAYERS' ACCOUNTS    |";
+                cout<<"\n|   --------------------------    |";
+                cout<<"\n+---------------------------------+";
+
+                cout<<"\n\n  PLAYER's NAME    :  ";
+                fflush(stdin);
+                puts(player[number_of_players].name);
+                fflush(stdin);
+
+                cout<<"\n  ENTER SECRET KEY :  ";
+                int l;
+                if(l==100){
+                    for(q=0; q<m; q++)
+                        cout<<"*"; //choice=getch();
+                    l=0;
+                }
+
+                for(; m<25;)
+                {
+                    player[number_of_players].key[m]=getch();
+                    if(player[number_of_players].key[m]==8)
+                    {
+                        if(m>0)
+                            m--;
+                        l=100;
+                        goto HERE;
+                    }
+                    cout<<"*";
+                    if(player[number_of_players].key[m]==13){
+                        player[number_of_players].key[m]='\0';
+                        //puts(player[number_of_players].key);
+                        //choice=getch();
+                        break;
+                    }
+                    m++;
+                }
+
+                fflush(stdin);
+                int k;
+                for(k=0; k<1000; k++)
+                {
+                    player[number_of_players].questions_answered[k]=0;
+                }
+
+                save_data();
+                cout<<"\n\n ACCOUNT CREATED SUCCESSFULLY";
+                cout<<"\n YOUR SECRET KEY IS:  [ "<<player[number_of_players].key<<" ]\n\n\t\t  ";
+                choice=getch();
+                break;
+            }else{
+                save_data();
+                system("cls");
+                cout<<"\n\n ACCOUNT CREATED SUCCESSFULLY\n\n\t\t";
+
+                choice=getch();
+                break;
+            }
+
+        }
+    }
+
+    save_data();
+    choose_acc();
+    return 0;
+}
+
+int quiting(){
+    system("cls");//clearing screen
+
+    cout<<"\n\n\t\t             Demo\n";
+    cout<<"\n\t\t     Create a Player Account\n";
+    cout<<"\n\t\t      Choose Player Account\n";
+    cout<<"\n\t\t            Read ME\n";
+    cout<<"\n\t\t  ------->>>> QUIT <<<<-------\n\n\t\t\t        ";
+
+    //waiting for choice from the user
+    choice=getch();
+    if(choice=='W' || choice=='w')
+    {
+        read_me();
+        return 0;
+    }
+
+    else if(choice=='S' || choice=='s')
+    {
+        demo();
+        return 0;
+    }
+    else if(choice==13 )
+    {
+        system("cls");
+        cout<<"+--------------------------------+";
+        cout<<"\n|             WARNING!          |";
+        cout<<"\n|            ---------          |";
+        cout<<"\n+--------------------------------+";
+
+        cout<<"\n\nAre you sure you want to Exit this game!";
+        cout<<"\nEnter 'Y' for yes or any key to council:\n\n\t\t  ";
+
+        choice=getche();
+        if(choice=='Y' || choice=='y')
+        {   system("cls");
+            save_data();
+            cout<<"\n\n\t \t Good Bye.\n\n\t\t    ";
+            choice=getche();
+            exit(1);
+            return 0;
+        }
+        else
+        {
+            quiting();
+            return 0;
+        }
+
+    }else{
+        quiting();
+        return 0;
+    }
+}
+
+int choose_acc(){
+
+    system("cls");//clearing screen
+
+    cout<<"\n\n\t\t             Demo\n";
+    cout<<"\n\t\t     Create a Player Account\n";
+    cout<<"\n\t\t--->> CHOOSE PLAYER ACCOUNT <<---\n";
+    cout<<"\n\t\t            Read ME\n";
+    cout<<"\n\t\t              Quit         \n\n\t\t\t        ";
+
+    choice=getch();//waiting for choice from the user
+    if(choice=='W' || choice=='w')
+    {
+        create_acc();
+        return 0;
+    }
+    else if(choice=='S' || choice=='s')
+    {
+        read_me();
+        return 0;
+    }
+    else if(choice==13){
+
+        //Choosing player account
+        number_of_players = load_data();
+        int pk=0;
+        system("cls");//clearing screen
+        cout<<"+-----------------------------------+";
+        cout<<"\n|        PLAYERS' ACCOUNTS          |";
+        cout<<"\n|        -----------------          |";
+        cout<<"\n+-----------------------------------+";
+
+        cout<<"\n ____________________________________";
+        cout<<"\n|                                    |";
+
+        for(i=0; i<number_of_players; i++){
+
+        if(player[i].display==1){
+                pk=1;
+                cout<<"\n  PLAYER "<<i+1<<": [ "<<player[i].name<<" ]"<<"\n";
+            }
+        }
+
+        if(number_of_players<1 || pk==0){
+            cout<<"\n\nList empty. Create at least one account.\n\n\t\t  ";
+        }else{
+            cout<<"\n|____________________________________|";
+            cout<<"\n\n  Enter a number that corresponds \n  with your player account:  ";
+        }
+
+        scanf("%s",&choice_str);//We scan  the input as a string to avoid the run time error if we scanned it an integer
+        k = convert_str_to_int(choice_str);//Our function that converts a string to integer
+
+
+
+
+        if(k<1 || k>=100 || player[k-1].display==0){
+            system("cls");
+            cout<<"\n\tYou entered a wrong input. Please try again\n\n\t\t";
+            choice = getch();
+            choose_acc();
+            return 0;
+        }
+
+        //Else, Now checking if the user exist before we log them in
+        if(k>number_of_players){
+            system("cls");
+            cout<<"You entered a wrong input. Please try again";
+            choice = getch();
+            choose_acc();
+            return 0;
+        }
+
+
+        //checking if user's account is protected
+        if(strlen(player[k].key)>=1){
+           system("cls");
+
+            m=0;
+            n=0;
+            l=0;
+
+            system("cls");
+
+            cout<<"+------------------------------------+";
+            cout<<"\n|           AUNTHENTICATION          |";
+            cout<<"\n|          -----------------         |";
+            cout<<"\n+------------------------------------+";
+            cout<<"\n\nHello "<<player[k].name<<",\nYour Account is protected by a secret key.\n\nENTER YOUR SECRET :  ";
+
+            scanf("%s",&temp_arr);
+
+
+
+            if(strcmp(temp_arr,player[k].key)==0){
+                logged_in_id = k-1;
+                logged_in();
+                return 0;
+            }else{
+                system("cls");//clearing screen
+                system("COLOR C");
+                cout<<"+---------------------------------+";
+                cout<<"\n|         Wrong Password          |";
+                cout<<"\n|          ------------           |";
+                cout<<"\n+---------------------------------+";
+                cout<<"\n\n\n\t\t  ";
+                choice=getche();
+                system("COLOR 7");
+                choose_acc();
+                return 0;
+            }
+        }else{
+                logged_in_id = k-1;
+                logged_in();
+                return 0;
+        }
+
+    }else{
+        choose_acc();
+        return 0;
+    }
+}
+
+int read_me(){
+    system("cls");//clearing screen
+
+    cout<<"\n\n\t\t             Demo\n";
+    cout<<"\n\t\t     Create a Player Account\n";
+    cout<<"\n\t\t      Choose Player Account\n";
+    cout<<"\n\t\t  ------>>> READ ME <<<------- \n";
+    cout<<"\n\t\t              Quit        \n\n\t\t\t        ";
+
+    choice=getch();//waiting for choice from the user
+
+    if(choice=='W' || choice=='w')
+    {
+        choose_acc();
+        return 0;
+    }
+
+    else if(choice=='S' || choice=='s')
+    {
+        quiting();
+        return 0;
+    }
+    else if(choice==13)
+    {
+        system("cls");
+        cout<<"+-----------------------------------+";
+        cout<<"\n|            HELP TIPS              |";
+        cout<<"\n|           -----------             |";
+        cout<<"\n+-----------------------------------+";
+
+        cout<<"\n\n 1. --> Press 'ESC' key to go back";
+        cout<<"\n\n 2. --> Press 'W' or 'S' key to navigate up or down respectively";
+        cout<<"\n\n 3. --> For some options, Enter a corresponding number to select an option";
+        cout<<"\n\n 4. --> The faster you chose a correct answer, the higher the points you gain";
+        cout<<"\n\n 5. --> A wrong answer leads to loss of mark.";
+        cout<<"\n\n 6. --> The game does not store records for DEMO player account.\n\n\t\t  ";
+
+        choice=getch();
+
+        read_me();
+        return 0;
+    }else{
+        read_me();
+        return 0;
+    }
+    return 0;
+}
+
