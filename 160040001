@@ -1,0 +1,72 @@
+//Ashiraf
+//ID : 160040001
+#include<iostream>
+#include<stdio.h>
+#include<cstring>
+#include<stdlib.h>    /* srand, rand */
+#include<conio.h>
+#include <time.h>       /* time */
+using namespace std;
+
+//A class that creates a structure of questions
+class question{
+public:
+    string qn;
+    //This string with name qn, shall  store a question.
+
+    string opt[5];
+    //This array of five strings shall contain 4 options and 1 correct answer
+
+    string category;
+    //Shall contain a category of a question
+
+    int level;
+    //Shall store a level of a question
+    question(){
+    }
+
+    char correct_ans;
+};
+
+struct player{
+    int id,hide,num_qn;
+    char name[25];
+    char key[25];
+    int age;
+    int questions_answered[103];
+    int points;
+    int display;
+};
+
+
+
+
+//Creating a object to point at a question object memory.
+question q[103];
+player player[51];
+
+//Global variables to use in all functions
+char choice;
+int r;
+int tested = 0;
+int demo();
+int quiting();
+int create_acc();
+int choose_acc();
+int read_me();
+int play(bool test);
+int initializer();
+int number_of_players=0;
+int temp_age = 0;
+void save_data();
+int logged_in_id;
+int no_qn,i,k,l,m,n;
+char choice_str[3], temp_arr[100];
+int convert_str_to_int(char h[3]);
+int load_data();
+
+void resume();
+void view_scores();
+void settings();
+void sign_out();
+void logged_in();
