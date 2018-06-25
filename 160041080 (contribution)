@@ -1,5 +1,5 @@
 //Kaal
-//ID: 16004080
+//ID: 160041080
 int convert_str_to_int(char h[3]){
     k= (int)(h[0]);
     k=k-48;
